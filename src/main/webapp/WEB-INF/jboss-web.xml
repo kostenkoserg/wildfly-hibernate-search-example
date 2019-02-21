@@ -1,0 +1,3 @@
+<jboss-web>
+    <context-root>/admin-endpoint</context-root>
+</jboss-web>
