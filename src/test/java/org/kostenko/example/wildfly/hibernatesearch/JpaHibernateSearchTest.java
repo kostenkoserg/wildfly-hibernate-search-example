@@ -4,7 +4,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.Test;
 import javax.persistence.Persistence;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
@@ -25,10 +25,6 @@ public class JpaHibernateSearchTest {
         entityManager = Persistence.createEntityManagerFactory("myDSTest").createEntityManager();
         fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(BlogEntity.class).get();
-    }
-
-    @Test
-    public void shouldPersistBlogEntity() {
         for (int i = 0; i < 1000; i++) {
             BlogEntity blogEntity = new BlogEntity();
             blogEntity.setTitle("Title" + i);
@@ -63,13 +59,14 @@ public class JpaHibernateSearchTest {
         Query query = queryBuilder.keyword().fuzzy().withEditDistanceUpTo(2).withPrefixLength(0).onField("title").matching("TAtle999").createQuery();
 
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class);
-        List<BlogEntity> result = persistenceQuery.getResultList();// execute search
+        List<BlogEntity> result = persistenceQuery.getResultList();
         Assert.assertFalse(result.isEmpty());
         Assert.assertEquals("Title999", result.get(0).getTitle());
     }
 
     /**
-     * Wildcard Queries - queries for which a part of a word is unknown ('?' - single character, '*' - character sequence)
+     * Wildcard Queries - queries for which a part of a word is unknown ('?' -
+     * single character, '*' - character sequence)
      */
     @Test
     public void shouldSearchByWildcardQuery() throws Exception {
@@ -77,7 +74,7 @@ public class JpaHibernateSearchTest {
         Query query = queryBuilder.keyword().wildcard().onField("title").matching("?itle*").createQuery();
 
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class);
-        List<BlogEntity> result = persistenceQuery.getResultList();// execute search
+        List<BlogEntity> result = persistenceQuery.getResultList();
         Assert.assertFalse(result.isEmpty());
         Assert.assertEquals(1000, result.size());
     }
@@ -95,6 +92,5 @@ public class JpaHibernateSearchTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertEquals("Title999", result.get(0).getTitle());
     }
-    
 
 }

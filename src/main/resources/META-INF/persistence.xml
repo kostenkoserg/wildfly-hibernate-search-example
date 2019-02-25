@@ -2,16 +2,18 @@
 <persistence version="2.0"
              xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-    <persistence-unit name="fastoDS" transaction-type="JTA">
-        <jta-data-source>java:jboss/datasources/fastoDS</jta-data-source>
+    
+    <persistence-unit name="ExampleDS" transaction-type="JTA">
+        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
-            <!--property name="hibernate.transaction.jta.platform" value="JBossAS" /-->
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.cache.use_second_level_cache" value="false"/>
-            <property name="hibernate.cache.use_query_cache" value="false"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.showSql" value="true"/>
+            <property name="hibernate.search.default.directory_provider" value="filesystem" />
+            <property name="hibernate.search.default.indexBase" value="/tmp/index2" />
+            <property name="hibernate.search.default.indexmanager" value="near-real-time" />
         </properties>
     </persistence-unit>
 </persistence>

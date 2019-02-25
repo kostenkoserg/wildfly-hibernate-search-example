@@ -52,4 +52,11 @@ public class BlogEntity {
     public void setBody(String body) {
         this.body = body;
     }
+
+    @Override
+    public String toString() {
+        return "{" + "id=" + id + ", title=" + title + ", body=" + body + '}';
+    }
+    
+    
 }
