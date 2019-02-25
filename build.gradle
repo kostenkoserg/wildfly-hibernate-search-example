@@ -4,13 +4,26 @@ apply plugin: 'war'
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+defaultTasks 'clean', 'build'
+
+ext.libraryVersions = [
+            javaee                  : '8.0',
+            wildfly                 : '15.0.1.Final',
+]
+
+configurations {
+    wildfly
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     
-    providedCompile 'javax:javaee-api:7.0'
+    wildfly "org.wildfly:wildfly-dist:${libraryVersions.wildfly}@zip"
+    
+    providedCompile 'javax:javaee-api:8.0'
     providedCompile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.4.1.Final'
     providedCompile group: 'org.hibernate', name: 'hibernate-search-orm', version: '5.11.1.Final'
     
@@ -21,5 +34,17 @@ dependencies {
     testCompile group: 'org.hibernate', name: 'hibernate-search-orm', version: '5.11.1.Final'
 
 }
+
+// remove wildfly from build directory
+task removeWildfly(type:Delete) {
+    delete "build/wildfly-${libraryVersions.wildfly}"
+}
+
+// unzip wildfly to the build directory
+task resolveWildfly(type:Copy, dependsOn:removeWildfly) {
+    destinationDir = buildDir
+    from {zipTree(configurations.wildfly.singleFile)}
+}
+
 
 
