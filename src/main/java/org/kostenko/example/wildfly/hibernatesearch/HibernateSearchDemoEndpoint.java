@@ -26,14 +26,16 @@ public class HibernateSearchDemoEndpoint {
 
     @PersistenceContext
     EntityManager entityManager;
-
+    
+    /**
+     * Persist 1000 entities and rebuild index
+     * @return 
+     */
     @GET
     @Path("/init")
     @Transactional
     public Response init() {
-        
-       int count = entityManager.createQuery("SELECT COUNT(b) FROM BlogEntity b", Number.class).getSingleResult().intValue();
-        
+        int count = entityManager.createQuery("SELECT COUNT(b) FROM BlogEntity b", Number.class).getSingleResult().intValue();
         long time = System.currentTimeMillis();
         for (int i = count; i < count + 1000; i++) {
             BlogEntity blogEntity = new BlogEntity();
@@ -45,25 +47,22 @@ public class HibernateSearchDemoEndpoint {
         return Response.ok().entity(String.format("1000 records persisted. Current records %s Execution time = %s ms.", count + 1000, time)).build();
     }
 
+    /**
+     * Search by index
+     * @param q - query string
+     * @return 
+     */
     @GET
     @Path("/search")
     public Response search(@QueryParam("q") String q) {
-
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(BlogEntity.class).get();
-
         long time = System.currentTimeMillis();
         Query query = queryBuilder.keyword().onFields("title", "body").matching(q).createQuery();
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class);
         List<BlogEntity> result = persistenceQuery.getResultList();
         time = System.currentTimeMillis() - time;
-
-        return Response.ok().entity(
-                String.format("Found %s results. [%s] Execution time = %s ms.",
-                        result.size(), 
-                        result.stream().map(Object::toString).collect(Collectors.joining(",")),
-                        time)
-        ).build();
+        String resultStr = result.stream().map(Object::toString).collect(Collectors.joining(","));
+        return Response.ok().entity( String.format("Found %s results. [%s] Execution time = %s ms.",result.size(),resultStr,time)).build();
     }
-
 }

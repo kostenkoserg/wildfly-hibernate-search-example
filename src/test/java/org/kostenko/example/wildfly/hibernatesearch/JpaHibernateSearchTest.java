@@ -41,9 +41,7 @@ public class JpaHibernateSearchTest {
      */
     @Test
     public void shouldSearchByKeywordQuery() throws Exception {
-
         Query query = queryBuilder.keyword().onFields("title", "body").matching("Body999").createQuery();
-
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class); // wrap Lucene query in a javax.persistence.Query
         List<BlogEntity> result = persistenceQuery.getResultList();// execute search
         Assert.assertFalse(result.isEmpty());
@@ -55,9 +53,7 @@ public class JpaHibernateSearchTest {
      */
     @Test
     public void shouldSearchByFuzzyQuery() throws Exception {
-
         Query query = queryBuilder.keyword().fuzzy().withEditDistanceUpTo(2).withPrefixLength(0).onField("title").matching("TAtle999").createQuery();
-
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class);
         List<BlogEntity> result = persistenceQuery.getResultList();
         Assert.assertFalse(result.isEmpty());
@@ -65,14 +61,11 @@ public class JpaHibernateSearchTest {
     }
 
     /**
-     * Wildcard Queries - queries for which a part of a word is unknown ('?' -
-     * single character, '*' - character sequence)
+     * Wildcard Queries - queries for which a part of a word is unknown ('?' - single character, '*' - character sequence)
      */
     @Test
     public void shouldSearchByWildcardQuery() throws Exception {
-
         Query query = queryBuilder.keyword().wildcard().onField("title").matching("?itle*").createQuery();
-
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class);
         List<BlogEntity> result = persistenceQuery.getResultList();
         Assert.assertFalse(result.isEmpty());
@@ -84,9 +77,7 @@ public class JpaHibernateSearchTest {
      */
     @Test
     public void shouldSearchByPhraseQuery() throws Exception {
-
         Query query = queryBuilder.phrase().withSlop(10).onField("body").sentence("look amazing horse 999").createQuery();
-
         javax.persistence.Query persistenceQuery = fullTextEntityManager.createFullTextQuery(query, BlogEntity.class);
         List<BlogEntity> result = persistenceQuery.getResultList();
         Assert.assertFalse(result.isEmpty());

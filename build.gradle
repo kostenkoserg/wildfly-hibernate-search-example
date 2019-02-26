@@ -2,10 +2,7 @@ apply plugin: 'java'
 apply plugin: 'war'
 
 sourceCompatibility = '1.8'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 defaultTasks 'clean', 'build'
-
 ext.libraryVersions = [
     javaee                  : '8.0',
     wildfly                 : '15.0.1.Final',
@@ -15,38 +12,29 @@ ext.libraryVersions = [
     dom4j                   : '2.1.1',
     junit                   : '4.12'
 ]
-
 configurations {
     wildfly
 }
-
 repositories {
     mavenCentral()
 }
-
 dependencies {
     wildfly "org.wildfly:wildfly-dist:${libraryVersions.wildfly}@zip"
     providedCompile "javax:javaee-api:${libraryVersions.javaee}"
     providedCompile "org.hibernate:hibernate-search-orm:${libraryVersions.hibernatesearch}"
-
     testCompile "junit:junit:${libraryVersions.junit}"
     testCompile "com.h2database:h2:${libraryVersions.h2}"
     testCompile "org.hibernate:hibernate-entitymanager:${libraryVersions.hibernateentitymanager}"
     testCompile "org.hibernate:hibernate-search-orm:${libraryVersions.hibernatesearch}"
     testCompile "org.dom4j:dom4j:${libraryVersions.dom4j}"
 }
-
-
-
 task removeWildfly(type:Delete) {
     delete "build/wildfly-${libraryVersions.wildfly}"
 }
-
 task resolveWildfly(type:Copy, dependsOn:removeWildfly) {
     destinationDir = buildDir
     from {zipTree(configurations.wildfly.singleFile)}
 }
-
 task run() {
     dependsOn 'resolveWildfly'
     doLast {
